@@ -1,0 +1,27 @@
+hosts - wrapper for libc which provides defining host aliases in a per-user file
+
+compilation:
+
+$ git clone https://github.com/figiel/hosts.git
+$ cd hosts
+$ make
+
+installation (example for bash):
+
+$ mkdir ~/bin
+$ cp libhostspriv.so ~/bin
+$ echo 'export LD_PRELOAD=~/bin/libhostspriv.so' >> ~/.bashrc
+$ logout
+
+usage:
+
+$ echo "127.0.0.1 new_name" >> ~/.hosts
+$ nc -vz new_name 80
+
+limitations:
+ - doesn't work with suid programs for obvious reasons, that includes ping
+   unfortunately.
+
+feedback:
+ - if you've found any bugs, feel free to fork & request a pull with patch
+
