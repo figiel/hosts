@@ -1,5 +1,10 @@
 hosts - wrapper for libc which provides defining host aliases in a per-user file
 
+note:
+
+ - if your libc does support it you may want to set HOSTALIASES instead of
+   using this wrapper, see gethostbyname(3).
+
 compilation:
 
 $ git clone https://github.com/figiel/hosts.git
