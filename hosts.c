@@ -48,6 +48,9 @@ static char *lookup_alias(const char *alias)
 	char *line = NULL;
 	size_t line_len;
 
+	if (!alias)
+		return NULL;
+
 	if (home_env) {
 		/* thread safety paranoia as env variables are global */
 		home_env = strdup(home_env);
@@ -196,6 +199,7 @@ static int test_hosts()
 	ASSERT_EQUAL(lookup_alias_test("shouldwork"), "10.0.0.5");
 	ASSERT(lookup_alias_test("some_evilness")==NULL);
 	ASSERT_EQUAL(lookup_alias_test("thistoo"), "10.0.0.6");
+	ASSERT(lookup_alias_test(NULL) == NULL);
 
 	return 0;
 }
