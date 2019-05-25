@@ -30,3 +30,6 @@ limitations:
 feedback:
  - if you've found any bugs, feel free to fork & request a pull with patch
 
+license:
+ - this code is public domain, licensed under terms of CC0 license (see LICENSE
+   file).
