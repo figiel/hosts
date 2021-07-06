@@ -43,31 +43,34 @@ static char *lookup_alias(const char *alias)
 {
 	char *ret = NULL;
 	FILE *hosts_file = NULL;
-	char *home_env = getenv("HOME");
-	char *fname = "/.hosts";
+	const char *hosts_file_env = getenv("HOSTS_FILE");
 	char *line = NULL;
 	size_t line_len;
 
 	if (!alias)
 		return NULL;
 
-	if (home_env) {
-		/* thread safety paranoia as env variables are global */
-		home_env = strdup(home_env);
-	}
+	if (hosts_file_env) {
+		hosts_file = fopen(hosts_file_env, "r");
+	} else {
+		const char *relative_host_file_path = "/.hosts";
+		const char *home_env = getenv("HOME");
+		if (!home_env)
+			return NULL;
 
-	if (home_env) {
-		char *tmp;
-		if (NULL != (tmp = realloc(home_env, strlen(home_env)+strlen(fname)+1))) {
-			home_env = tmp;
-			strcat(home_env, fname);
-			fname = home_env;
+		char *hosts_file_path = malloc(strlen(home_env)+strlen(relative_host_file_path)+1);
+		if (!hosts_file_path) {
+			return NULL;
 		}
+		strcpy(hosts_file_path, home_env);
+		strcat(hosts_file_path, relative_host_file_path);
+
+		hosts_file = fopen(hosts_file_path, "r");
+
+		free(hosts_file_path);
 	}
 
-	hosts_file = fopen(fname, "r");
 	if (!hosts_file) {
-		free(home_env); /* NULL or strdup or realloc */
 		return NULL;
 	}
 
@@ -80,7 +83,6 @@ static char *lookup_alias(const char *alias)
 	}
 	free(line);
 	fclose(hosts_file);
-	free(home_env);
 	return ret;
 
 }
@@ -183,7 +185,7 @@ static int test_hosts()
 	ASSERT(find_alias_test("", "sometest")==NULL);
 	ASSERT(find_alias_test("", "")==NULL);
 
-	ASSERT(setenv("HOME", getenv("PWD"), 1)==0);
+	ASSERT(setenv("HOSTS_FILE", ".hosts", 1)==0);
 	hosts = fopen(".hosts", "w");
 	ASSERT(hosts != NULL);
 
@@ -200,6 +202,10 @@ static int test_hosts()
 	ASSERT(lookup_alias_test("some_evilness")==NULL);
 	ASSERT_EQUAL(lookup_alias_test("thistoo"), "10.0.0.6");
 	ASSERT(lookup_alias_test(NULL) == NULL);
+
+	ASSERT(setenv("HOME", getenv("PWD"), 1)==0);
+	ASSERT(unsetenv("HOSTS_FILE")==0);
+	ASSERT_EQUAL(lookup_alias_test("sometest2"), "10.0.0.2");
 
 	return 0;
 }
