@@ -203,6 +203,10 @@ static int test_hosts()
 	ASSERT_EQUAL(lookup_alias_test("thistoo"), "10.0.0.6");
 	ASSERT(lookup_alias_test(NULL) == NULL);
 
+	ASSERT(setenv("HOME", getenv("PWD"), 1)==0);
+	ASSERT(unsetenv("HOSTS_FILE")==0);
+	ASSERT_EQUAL(lookup_alias_test("sometest2"), "10.0.0.2");
+
 	return 0;
 }
 
