@@ -41,4 +41,4 @@ HOSTS_FILE=$PWD/hosts nc -vz somehost 80
 
 ## Limitations
 
-`hosts` does not work with suid programs due to suid programs clearing the environment before starting. That includes `ping` unfortunately.
+`hosts` does not work with suid programs. That includes `ping` unfortunately.
