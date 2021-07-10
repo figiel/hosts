@@ -7,12 +7,6 @@ with functionality that fetches these entries from a user-defined hosts file ins
 
 By default `hosts` fetches hosts entries from `~/.hosts`, but `HOSTS_FILE` can be used to specify a different file as well.
 
-## `HOSTALIASES`
-
-Some variants of libc have support for the `HOSTALIASES` environment variable.
-This is similar to using `HOSTS_FILE` in this library.
-However, the variant of glibc used on Debian and ArchLinux, amongst others, do not have this feature.
-
 ## Build
 
 ```sh
