@@ -39,15 +39,30 @@ LD_PRELOAD=$HOME/bin/libhostspriv.so firefox
 Using the default hosts file in `$HOME`:
 
 ```sh
-echo "127.0.0.1 somehost" >> ~/.hosts
+echo "127.0.0.1 somehost" > ~/.hosts
 nc -vz somehost 80
 ```
 
 Using the `HOSTS_FILE` environment variable:
 
 ```sh
-echo "127.0.0.1 somehost" >> hosts
+echo "127.0.0.1 somehost" > hosts
 HOSTS_FILE=$PWD/hosts nc -vz somehost 80
+```
+
+Use hostnames as target to redirect name resolving:
+
+```sh
+echo "localhost somehost2" > ~/.hosts
+nc -vz somehost2 80
+```
+
+Resolving will not happen recursively, so the following will attempt to DNS resolve `somehost`:
+
+```sh
+echo "localhost somehost" > ~/.hosts
+echo "somehost somehost2" >> ~/.hosts
+nc -vz somehost2 80
 ```
 
 ## Limitations
