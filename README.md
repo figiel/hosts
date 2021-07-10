@@ -2,10 +2,11 @@
 
 Allow user-defined hosts entries.
 
-`hosts` is a `LD_PRELOAD` library that overrides the fetching of hostnames in applications
-with functionality that fetches these entries from a user-defined hosts file instead of `/etc/hosts`.
+`hosts` is a `LD_PRELOAD` library that overrides the fetching of hostnames in applications. `hosts` transforms hostnames using a user-defined hosts file before doing the actual lookup.
 
-By default `hosts` fetches hosts entries from `~/.hosts`, but `HOSTS_FILE` can be used to specify a different file as well.
+This allows using your own `hosts` file on top of your system `/etc/hosts` file.
+
+By default `hosts` fetches hosts entries from the home directory (`~/.hosts`). This can be overridden using an environment variable (`HOSTS_FILE`) to specify a different file.
 
 ## Build
 
