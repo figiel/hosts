@@ -18,10 +18,20 @@ This results in `libhostspriv.so`.
 
 ## Install
 
+You can choose to use `hosts` globally for your user account by adding it to your shell, using bashrc:
+
 ```sh
 mkdir ~/bin
 cp libhostspriv.so ~/bin
 echo 'export LD_PRELOAD=$HOME/bin/libhostspriv.so' >> ~/.bashrc
+
+source ~/.bashrc
+```
+
+You can also use `hosts` for individual commands:
+
+```sh
+LD_PRELOAD=$HOME/bin/libhostspriv.so firefox
 ```
 
 ## Usage
