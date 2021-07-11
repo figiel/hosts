@@ -70,5 +70,9 @@ int main() {
   char resolved_localhost[INET6_ADDRSTRLEN] = "";
   resolve("localhost", resolved_localhost);
   assert_resolve("localhostalias", resolved_localhost);
+
+	assert_resolve("someipv6test1", "::1");
+	assert_resolve("someipv6test2", "::ffff:10.0.0.7");
+	assert_resolve("someipv6test3", "::ffff:10.0.0.8");
 	return 0;
 }
