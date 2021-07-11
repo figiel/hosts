@@ -60,10 +60,15 @@ int main() {
 	assert_resolve("sometest2", "10.0.0.2");
 	assert_resolve("sometest3", "10.0.0.2");
 	assert_resolve("sometest4", "10.0.0.2");
+
 	assert_resolve("sometesttest", "10.0.0.3");
 	assert_resolve("some_evilness", "");
 	assert_resolve("shouldwork", "10.0.0.5");
 	assert_resolve("thistoo", "10.0.0.6");
 	assert_resolve("unknown", "");
+
+  char resolved_localhost[INET6_ADDRSTRLEN] = "";
+  resolve("localhost", resolved_localhost);
+  assert_resolve("localhostalias", resolved_localhost);
 	return 0;
 }
