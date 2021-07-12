@@ -3,16 +3,6 @@
 #include <stdlib.h>
 #include <dlfcn.h>
 
-#ifdef COMPILE_FOR_TEST
-#include <assert.h>
-
-#define ASSERT_EQUAL(str1, str2) do { \
- assert(str1 != NULL); \
- assert(str2 != NULL); \
- assert(strcmp(str1, str2)==0); } while (0)
-#define ASSERT assert
-#endif /* COMPILE_FOR_TEST */
-
 #define DELIMITERS " \t\n\r"
 
 static char *find_alias_in_line(char *hosts_line, const char *alias)
@@ -33,7 +23,7 @@ static char *find_alias_in_line(char *hosts_line, const char *alias)
 
 	while (NULL != (token = strtok_r(NULL, DELIMITERS, &strtok_saveptr))) {
 		if (strcmp(alias, token) == 0)
-			return ret;	
+			return ret;
 	}
 
 	return NULL;
@@ -87,8 +77,6 @@ static char *lookup_alias(const char *alias)
 
 }
 
-#ifndef COMPILE_FOR_TEST
-
 /* actual wrappers, i know it's ugly and c++ was invented in the meanwhile ;)
  */
 
@@ -114,7 +102,7 @@ ret_type fun_name(__VA_ARGS__) \
  *  ret_type: type of value returned
  *  name: name of the variable which will have its value looked up in hosts file
  *  ...: all arguments with their types, including one with name as above
- * FUN_END: 
+ * FUN_END:
  *  ...: all arguments without their types, keep the order.
  */
 
@@ -135,83 +123,3 @@ FUN_END(name,a,b,c,d,e,f);
 
 FUN_BEGIN(inet_aton, int, name, char *name, void *a);
 FUN_END(name, a);
-
-
-#else /* COMPILE_FOR_TEST */
-
-static char *find_alias_test(char *hosts_line, const char *alias)
-{
-	static char writable_test_buffer[128];
-	strncpy(writable_test_buffer, hosts_line, sizeof(writable_test_buffer)-1);
-	return find_alias_in_line(writable_test_buffer, alias);
-}
-
-static char *lookup_alias_test(const char *alias)
-{
-	static char writable_test_buffer[128];
-	char *tmp = lookup_alias(alias);
-	
-	if (tmp != NULL) {
-		strncpy(writable_test_buffer, tmp, sizeof(writable_test_buffer)-1);
-		free(tmp);
-		tmp = writable_test_buffer;
-	}
-	return tmp;
-}
-
-static int test_hosts()
-{
-	FILE *hosts;
-
-	char test_hosts_contents[] = "\
-10.0.0.1 sometest\n\
-10.0.0.2 sometest2 sometest3 sometest4\n\
-10.0.0.3 sometesttest # sometest\n\
-10.0.0.4 \x00 some_evilness \n\
-10.0.0.5 shouldwork\n\
-\n\
-\n\
-\n\
-10.0.0.6 thistoo#end\n\
-";
-
-	ASSERT_EQUAL(find_alias_test("10.0.0.1 github.com sometest", "sometest"), "10.0.0.1");
-	ASSERT(find_alias_test("#sometestsometest sometest sometest sometest", "sometest")==NULL);
-	ASSERT(find_alias_test("#abbb bbb bb #aaabbb bbb, bbb", "bbb")==NULL);
-	ASSERT_EQUAL(find_alias_test("10.0.0.1 github.com", "github.com"), "10.0.0.1");
-	ASSERT(find_alias_test("10.0.0.1 sometest # github.com", "github.com")==NULL);
-	ASSERT(find_alias_test("10.0.0.1 sometest#github.com", "github.com")==NULL);
-	ASSERT_EQUAL(find_alias_test("10.0.0.1 sometest#github.com", "sometest"), "10.0.0.1");
-	ASSERT(find_alias_test("", "sometest")==NULL);
-	ASSERT(find_alias_test("", "")==NULL);
-
-	ASSERT(setenv("HOSTS_FILE", ".hosts", 1)==0);
-	hosts = fopen(".hosts", "w");
-	ASSERT(hosts != NULL);
-
-	ASSERT(fwrite(test_hosts_contents, 1, sizeof(test_hosts_contents), hosts)
-		==sizeof(test_hosts_contents));
-	fclose(hosts);
-
-	ASSERT(lookup_alias_test("xyz") == NULL);
-	ASSERT_EQUAL(lookup_alias_test("sometest2"), "10.0.0.2");
-	ASSERT_EQUAL(lookup_alias_test("sometest3"), "10.0.0.2");
-	ASSERT_EQUAL(lookup_alias_test("sometest4"), "10.0.0.2");
-	ASSERT_EQUAL(lookup_alias_test("sometesttest"), "10.0.0.3");
-	ASSERT_EQUAL(lookup_alias_test("shouldwork"), "10.0.0.5");
-	ASSERT(lookup_alias_test("some_evilness")==NULL);
-	ASSERT_EQUAL(lookup_alias_test("thistoo"), "10.0.0.6");
-	ASSERT(lookup_alias_test(NULL) == NULL);
-
-	ASSERT(setenv("HOME", getenv("PWD"), 1)==0);
-	ASSERT(unsetenv("HOSTS_FILE")==0);
-	ASSERT_EQUAL(lookup_alias_test("sometest2"), "10.0.0.2");
-
-	return 0;
-}
-
-int main() {
-	return test_hosts();
-}
-
-#endif /* COMPILE_FOR_TEST */
