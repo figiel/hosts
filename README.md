@@ -1,12 +1,12 @@
-# hosts
+# userhosts
 
 Allow user-defined hosts entries.
 
-`hosts` is a `LD_PRELOAD` library that overrides the fetching of hostnames in applications. `hosts` transforms hostnames using a user-defined hosts file before doing the actual lookup.
+`userhosts` is a `LD_PRELOAD` library that overrides the fetching of hostnames in applications. `userhosts` transforms hostnames using a user-defined hosts file before doing the actual lookup.
 
-This allows using your own `hosts` file on top of your system `/etc/hosts` file.
+This allows using your own `userhosts` file on top of your system `/etc/hosts` file.
 
-By default `hosts` fetches hosts entries from the home directory (`~/.hosts`). This can be overridden using an environment variable (`HOSTS_FILE`) to specify a different file.
+By default `userhosts` fetches hosts entries from the home directory (`~/.hosts`). This can be overridden using an environment variable (`HOSTS_FILE`) to specify a different file.
 
 ## Build
 
@@ -14,24 +14,24 @@ By default `hosts` fetches hosts entries from the home directory (`~/.hosts`). T
 make
 ```
 
-This results in `libhostspriv.so`.
+This results in `libuserhosts.so`.
 
 ## Install
 
-You can choose to use `hosts` globally for your user account by adding it to your shell, using bashrc:
+You can choose to use `userhosts` globally for your user account by adding it to your shell, using bashrc:
 
 ```sh
 mkdir ~/bin
-cp libhostspriv.so ~/bin
-echo 'export LD_PRELOAD=$HOME/bin/libhostspriv.so' >> ~/.bashrc
+cp libuserhosts.so ~/bin
+echo 'export LD_PRELOAD=$HOME/bin/libuserhosts.so' >> ~/.bashrc
 
 source ~/.bashrc
 ```
 
-You can also use `hosts` for individual commands:
+You can also use `userhosts` for individual commands:
 
 ```sh
-LD_PRELOAD=$HOME/bin/libhostspriv.so firefox
+LD_PRELOAD=$HOME/bin/libuserhosts.so firefox
 ```
 
 ## Usage
@@ -67,4 +67,4 @@ nc -vz somehost2 80
 
 ## Limitations
 
-`hosts` does not work with suid programs. That includes `ping` unfortunately.
+`userhosts` does not work with suid programs. That includes `ping` unfortunately.
