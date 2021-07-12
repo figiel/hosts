@@ -1,5 +1,8 @@
 CFLAGS+=-Wall
 
+ifeq ($(PREFIX),)
+    PREFIX := /usr/local
+endif
 
 all: test libuserhosts.so
 
@@ -15,6 +18,10 @@ test_getaddrinfo: test_getaddrinfo.c
 test: test_getaddrinfo libuserhosts.so .hosts
 	LD_PRELOAD=${PWD}/libuserhosts.so HOSTS_FILE=test_hosts ./test_getaddrinfo
 	LD_PRELOAD=${PWD}/libuserhosts.so HOME=${PWD} ./test_getaddrinfo
+
+install: libuserhosts.so
+	install -d $(DESTDIR)$(PREFIX)/lib/
+	install -m 644 libuserhosts.so $(DESTDIR)$(PREFIX)/lib/
 
 clean:
 	rm -f libuserhosts.so test_getaddrinfo .hosts
