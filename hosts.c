@@ -48,7 +48,8 @@ static char *lookup_alias(const char *alias)
 		if (!home_env)
 			return NULL;
 
-		char *hosts_file_path = malloc(strlen(home_env)+strlen(relative_host_file_path)+1);
+		char *hosts_file_path = malloc(
+			strlen(home_env) + strlen(relative_host_file_path) + 1);
 		if (!hosts_file_path) {
 			return NULL;
 		}
@@ -64,7 +65,7 @@ static char *lookup_alias(const char *alias)
 		return NULL;
 	}
 
-	while (getline(&line, &line_len, hosts_file)>=0) {
+	while (getline(&line, &line_len, hosts_file) >= 0) {
 		ret = find_alias_in_line(line, alias);
 		if (ret) {
 			ret = strdup(ret);
@@ -74,26 +75,28 @@ static char *lookup_alias(const char *alias)
 	free(line);
 	fclose(hosts_file);
 	return ret;
-
 }
 
 /* actual wrappers, i know it's ugly and c++ was invented in the meanwhile ;)
  */
 
 #define FUN_BEGIN(fun_name, ret_type, alias_arg_name, ...) \
-ret_type fun_name(__VA_ARGS__) \
-{\
-	ret_type ret; \
-	char *alias = NULL; \
-	ret_type (* orig_fun)(__VA_ARGS__) = dlsym(RTLD_NEXT, #fun_name); \
-	alias = lookup_alias(alias_arg_name); \
-	if (alias) alias_arg_name = alias;
+	ret_type fun_name(__VA_ARGS__) \
+	{ \
+		ret_type ret; \
+		char *alias = NULL; \
+		ret_type (*orig_fun)(__VA_ARGS__) = \
+			dlsym(RTLD_NEXT, #fun_name); \
+		alias = lookup_alias(alias_arg_name); \
+		if (alias) \
+			alias_arg_name = alias;
 
 #define FUN_END(...) \
 	ret = orig_fun(__VA_ARGS__); \
-	if (alias) free(alias); \
+	if (alias) \
+		free(alias); \
 	return ret; \
-}
+	}
 
 /* each wrapped function has its own FUN_BEGIN and FUN_END macro invocations
  * syntax is:
@@ -115,11 +118,13 @@ FUN_END(name);
 FUN_BEGIN(gethostbyname2, void *, name, char *name, int af);
 FUN_END(name, af);
 
-FUN_BEGIN(gethostbyname_r, int, name, char *name, void *a, void *b, size_t c, void *d, void *e);
-FUN_END(name,a,b,c,d,e);
+FUN_BEGIN(gethostbyname_r, int, name, char *name, void *a, void *b, size_t c,
+	  void *d, void *e);
+FUN_END(name, a, b, c, d, e);
 
-FUN_BEGIN(gethostbyname2_r, int, name, char *name, int a, void *b, void *c, size_t d, void *e, void *f);
-FUN_END(name,a,b,c,d,e,f);
+FUN_BEGIN(gethostbyname2_r, int, name, char *name, int a, void *b, void *c,
+	  size_t d, void *e, void *f);
+FUN_END(name, a, b, c, d, e, f);
 
 FUN_BEGIN(inet_aton, int, name, char *name, void *a);
 FUN_END(name, a);
