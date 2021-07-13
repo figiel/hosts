@@ -2,11 +2,18 @@
 
 Allow user-defined hosts entries.
 
-`userhosts` is a `LD_PRELOAD` library that overrides the fetching of hostnames in applications. `userhosts` transforms hostnames using a user-defined hosts file before doing the actual lookup.
+`userhosts` is a `LD_PRELOAD` library that overrides the fetching of hostnames
+in applications. `userhosts` transforms hostnames using a user-defined hosts
+file before doing the actual lookup.
 
-This allows using your own `userhosts` file on top of your system `/etc/hosts` file.
+This allows using your own `userhosts` file on top of your system `/etc/hosts`
+file.
 
-By default `userhosts` fetches hosts entries from the home directory (`~/.hosts`). This can be overridden using an environment variable (`HOSTS_FILE`) to specify a different file.
+By default `userhosts` fetches hosts entries from the home directory
+(`~/.hosts`). This can be overridden using an environment variable
+(`HOSTS_FILE`) to specify a different file.
+
+This library was renamed, the previous name was `libhostspriv.so`.
 
 ## Build
 
@@ -18,7 +25,8 @@ This results in `libuserhosts.so`.
 
 ## Install
 
-You can choose to use `userhosts` globally for your user account by adding it to your shell, using bashrc:
+You can choose to use `userhosts` globally for your user account by adding it
+to your shell, using bashrc:
 
 ```sh
 mkdir ~/bin
@@ -57,7 +65,8 @@ echo "localhost somehost2" > ~/.hosts
 nc -vz somehost2 80
 ```
 
-Resolving will not happen recursively, so the following will attempt to DNS resolve `somehost`:
+Resolving will not happen recursively, so the following will attempt to DNS
+resolve `somehost`:
 
 ```sh
 echo "localhost somehost" > ~/.hosts
@@ -67,4 +76,5 @@ nc -vz somehost2 80
 
 ## Limitations
 
-`userhosts` does not work with suid programs. That includes `ping` unfortunately.
+`userhosts` does not work with suid programs. That includes `ping`
+unfortunately.
