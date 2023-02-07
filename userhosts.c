@@ -22,7 +22,7 @@ static char *find_alias_in_line(char *hosts_line, const char *alias)
 	}
 
 	while (NULL != (token = strtok_r(NULL, DELIMITERS, &strtok_saveptr))) {
-		if (strcmp(alias, token) == 0)
+		if (strcasecmp(alias, token) == 0)
 			return ret;
 	}
 

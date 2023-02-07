@@ -75,5 +75,10 @@ int main()
 	assert_resolve("someipv6test1", "::1");
 	assert_resolve("someipv6test2", "::ffff:10.0.0.7");
 	assert_resolve("someipv6test3", "::ffff:10.0.0.8");
+
+	// Name resolution is not case sensitive
+	assert_resolve("someTest", "10.0.0.1");
+	assert_resolve("casedoesntmatter", "10.0.0.9");
+
 	return 0;
 }
