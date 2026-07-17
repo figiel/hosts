@@ -63,10 +63,10 @@ int main()
 	assert_resolve("sometest4", "10.0.0.2");
 
 	assert_resolve("sometesttest", "10.0.0.3");
-	assert_resolve("some_evilness", "");
+	assert_resolve("some_evilness.invalid.", "");
 	assert_resolve("shouldwork", "10.0.0.5");
 	assert_resolve("thistoo", "10.0.0.6");
-	assert_resolve("unknown", "");
+	assert_resolve("unknown.invalid.", "");
 
 	char resolved_localhost[INET6_ADDRSTRLEN] = "";
 	resolve("localhost", resolved_localhost);
